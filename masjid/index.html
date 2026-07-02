@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>خريطة المساجد</title>
+
+  <!-- خط Tajawal -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    crossorigin=""
+  />
+<style>
+/* =========================
+   إعداد عام
+========================= */
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: linear-gradient(45deg, #E1E6C9, white);
+  margin: 0;
+  padding: 0;
+  direction: rtl;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+/* =========================
+   الترويسة (Header)
+========================= */
+.header {
+  display: flex;
+  justify-content: space-between; /* العنوان يمين، الزر يسار */
+  align-items: center;
+  padding: 12px 25px;
+  background-color: white;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+  font-size: 30px;
+  font-weight: 700; 
+  color: #8e9b6f;
+  margin: 0;
+}
+
+
+.back-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #c5d8a4;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  box-shadow: 0px 3px 6px rgba(0,0,0,.15);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.back-btn:hover {
+  background-color: #6e7656;
+  transform: translateY(-2px);
+}
+
+/* =========================
+   شريط الأدوات (Toolbar)
+========================= */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 15px;
+}
+
+.toolbar button {
+  background: #8e9b6f;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.toolbar button:hover {
+  background: #6e7656;
+}
+
+.toolbar input[type="text"],
+.toolbar select {
+  height: 40px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #8e9b6f;
+  padding: 0 10px;
+  font-family: 'Tajawal', sans-serif;
+  min-width: 240px;
+}
+
+.toolbar label {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+/* =========================
+   الخريطة والقائمة
+========================= */
+#wrap {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 12px;
+  height: calc(100vh - 140px);
+  padding: 12px;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  background: #eef3ea;
+}
+
+#list {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+  overflow-y: auto;
+  padding: 15px;
+}
+
+#list h3 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: #6e7656;
+}
+
+#count {
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.item {
+  padding: 12px;
+  border: 1px solid #edf0f2;
+  border-radius: 12px;
+  margin: 8px 0;
+  cursor: pointer;
+  background:#fafafa;
+  transition: background 0.2s ease;
+}
+.item:hover { background:#dfe9d8; }
+
+.muted { color:#6b7280; font-size: 13px; }
+.loading { text-align:center; padding: 20px; color:#6b7280; }
+details { margin: 8px 0; }
+summary { cursor: pointer; color:#6b7280; }
+
+/* =========================
+   Toast Notifications
+========================= */
+#toast {
+  visibility: hidden;
+  min-width: 250px;
+  margin-right: 20px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 14px;
+  position: fixed;
+  z-index: 1000;
+  right: 30px;
+  bottom: 30px;
+  font-size: 15px;
+  font-weight: 600;
+}
+#toast.show {
+  visibility: visible;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+@keyframes fadein {
+  from { bottom: 0; opacity: 0; }
+  to { bottom: 30px; opacity: 1; }
+}
+@keyframes fadeout {
+  from { bottom: 30px; opacity: 1; }
+  to { bottom: 0; opacity: 0; }
+}
+
+/* =========================
+   Responsive Design
+========================= */
+@media (max-width: 900px) {
+  #wrap { grid-template-columns: 1fr; height:auto; }
+  #map { height: 60vh; }
+}
+
+</style>
+</head>
+<body>
+    <div class="header">
+        <h1>خريطة المساجد القريبة</h1>
+        <a href="#" class="back-btn" onclick="history.back(); return false;">⮑ رجوع</a>
+      </div>
+      
+
+
+  <div class="toolbar">
+    <button id="btnSearch">بحث 🔎</button>
+    <input id="city" type="text" placeholder="أدخل اسم المدينة (مثال: Rabat, Casablanca, Marrakech)" value="Rabat" />
+    <label class="muted">نطاق البحث:
+      <select id="radius">
+        <option value="3000">3 كم</option>
+        <option value="5000" selected>5 كم</option>
+        <option value="8000">8 كم</option>
+        <option value="12000">12 كم</option>
+      </select>
+    </label>
+  </div>
+
+  <div id="wrap">
+    <div id="map"></div>
+    <aside id="list">
+      <h3>قائمة المساجد</h3>
+      <div class="muted">اكتب مدينة واضغط "بحث"</div>
+    </aside>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <script>
+    // ——— إعداد الخريطة ———
+    const map = L.map('map', { zoomControl: true }).setView([33.5731, -7.5898], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let markersLayer = L.layerGroup().addTo(map);
+
+    const cityInp   = document.getElementById('city');
+    const radiusSel = document.getElementById('radius');
+    const listEl    = document.getElementById('list');
+    const btnSearch = document.getElementById('btnSearch');
+
+    btnSearch.addEventListener('click', runSearch);
+    cityInp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ runSearch(); } });
+
+    // ——— Utilitaires ———
+    const OVERPASS_ENDPOINTS = [
+      'https://overpass.kumi.systems/api/interpreter',
+      'https://lz4.overpass-api.de/api/interpreter',
+      'https://overpass-api.de/api/interpreter',
+      'https://z.overpass-api.de/api/interpreter'
+    ];
+
+    function delay(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    async function fetchJson(url, options={}, label='') {
+      const res = await fetch(url, options);
+      if (!res.ok) throw new Error(`${label} HTTP ${res.status}`);
+      return res.json();
+    }
+
+    async function geocode(city){
+      // 1) Nominatim (peut refuser si ouvert en file:// sans Referer)
+      const nomi = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(city)}`;
+      try {
+        const data = await fetchJson(nomi, { headers:{ 'Accept-Language':'ar,en;q=0.8,fr;q=0.6' } }, 'Nominatim');
+        if (Array.isArray(data) && data[0]) {
+          return {
+            lat: parseFloat(data[0].lat),
+            lon: parseFloat(data[0].lon),
+            label: data[0].display_name || city
+          };
+        }
+      } catch(e){ console.warn('Nominatim failed:', e.message); }
+
+      // 2) Photon (fallback, tolérant CORS)
+      const photon = `https://photon.komoot.io/api/?limit=1&q=${encodeURIComponent(city)}`;
+      const p = await fetchJson(photon, {}, 'Photon');
+      if (p && p.features && p.features[0]) {
+        const g = p.features[0].geometry.coordinates; // [lon, lat]
+        return { lat: g[1], lon: g[0], label: p.features[0].properties.name || city };
+      }
+
+      throw new Error('تعذّر تحديد موقع المدينة (geocoding).');
+    }
+
+    async function overpassQuery(query){
+      // essaie plusieurs miroirs avec petite pause
+      for (let i=0;i<OVERPASS_ENDPOINTS.length;i++){
+        const ep = OVERPASS_ENDPOINTS[i];
+        try {
+          const res = await fetch(ep, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            body: new URLSearchParams({ data: query })
+          });
+          if (!res.ok) throw new Error(`Overpass ${ep} HTTP ${res.status}`);
+          const json = await res.json();
+          if (json && Array.isArray(json.elements)) return json.elements;
+        } catch(e){
+          console.warn('Overpass mirror failed:', ep, e.message);
+          await delay(400); // petite pause avant le miroir suivant
+        }
+      }
+      throw new Error('كل مرايا Overpass فشلت.');
+    }
+
+    // ——— Flux principal ———
+    async function runSearch() {
+      const city = cityInp.value.trim();
+      if (!city) { alert('من فضلك أدخل اسم مدينة'); return; }
+
+      setListLoading('جارِ البحث عن المدينة…');
+
+      try {
+        const { lat, lon } = await geocode(city);
+        const r = parseInt(radiusSel.value, 10); // متر
+
+        map.setView([lat, lon], 13);
+
+        setListLoading('جارِ جلب المساجد…');
+
+        const overpass = `
+          [out:json][timeout:30];
+          (
+            node["amenity"="place_of_worship"]["religion"="muslim"](around:${r},${lat},${lon});
+            way["amenity"="place_of_worship"]["religion"="muslim"](around:${r},${lat},${lon});
+            relation["amenity"="place_of_worship"]["religion"="muslim"](around:${r},${lat},${lon});
+          );
+          out center;
+        `.trim();
+
+        const elements = await overpassQuery(overpass);
+        renderResults(elements, [lat, lon], r, city);
+      } catch (err) {
+        console.error(err);
+        setListMessage(`حصل خطأ أثناء جلب البيانات. حاول لاحقًا.`,
+          String(err && err.message ? err.message : err));
+      }
+    }
+
+    // ——— عرض النتائج ———
+    function renderResults(elements, center, radius, cityName) {
+      markersLayer.clearLayers();
+      L.circle(center, { radius, weight:1, fillOpacity:0.05 }).addTo(markersLayer);
+
+      listEl.innerHTML = '<h3>قائمة المساجد</h3>';
+
+      if (!elements.length) {
+        setListMessage(`لا توجد مساجد مسجّلة في هذا النطاق.`, `المدينة: ${cityName || ''}`);
+        return;
+      }
+
+      const countDiv = document.createElement('div');
+      countDiv.id = 'count';
+      countDiv.textContent = `عدد المساجد${cityName ? ' في ' + cityName : ''}: ${elements.length}`;
+      listEl.appendChild(countDiv);
+
+      const bounds = L.latLngBounds();
+
+      elements.forEach((el, idx) => {
+        const name =
+          (el.tags && (el.tags['name:ar'] || el.tags.name || el.tags['name:fr'] || el.tags['name:en']))
+          || `مسجد رقم ${idx + 1}`;
+
+        const addr = buildAddress(el.tags);
+        const lat = el.lat || (el.center && el.center.lat);
+        const lon = el.lon || (el.center && el.center.lon);
+        if (lat == null || lon == null) return;
+
+        const marker = L.marker([lat, lon], { title: name }).addTo(markersLayer);
+        marker.bindPopup(`<b>${sanitize(name)}</b><br/><span class="muted">${sanitize(addr)}</span>`);
+
+        bounds.extend([lat, lon]);
+
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `<b>🕌 ${sanitize(name)}</b><br><span class="muted">${sanitize(addr)}</span>`;
+        div.addEventListener('click', () => {
+          map.setView([lat, lon], 16);
+          marker.openPopup();
+        });
+        listEl.appendChild(div);
+      });
+
+      if (bounds.isValid()) {map.fitBounds(bounds);}    
+    }
+
+    // ——— Helpers UI ———
+    function buildAddress(tags = {}) {
+      const parts = [
+        tags['addr:street'],
+        tags['addr:housenumber'],
+        tags['addr:suburb'],
+        tags['addr:city'] || tags['addr:town'] || tags['addr:village']
+      ].filter(Boolean);
+      return parts.join('، ');
+    }
+
+    function setListLoading(text) {
+      listEl.innerHTML = `<h3>قائمة المساجد</h3><div class="loading">${text}</div>`;
+    }
+
+    function setListMessage(text, tech) {
+      listEl.innerHTML = `<h3>قائمة المساجد</h3>
+        <div class="loading">${text}</div>
+        ${tech ? `<details><summary>تفاصيل تقنية</summary><div class="muted" style="padding:8px">${sanitize(tech)}</div></details>` : ''}`;
+    }
+
+    function sanitize(s) {
+      return String(s || '').replace(/[&<>"'`=\/]/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','/':'&#x2F;','`':'&#x60;','=':'&#x3D;'
+      }[c]));
+    }
+
+    // بحث أولي
+    runSearch();
+  </script>
+</body>
+</html>

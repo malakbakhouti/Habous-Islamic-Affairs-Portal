@@ -1,0 +1,108 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f7f7f7;
+  color: #222;
+  margin: 0;
+  transition: background 0.3s, color 0.3s;
+}
+
+.dark {
+  background: #121212;
+  color: #eee;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  background: #dce3c6;
+}
+
+.dark header {
+  background: #1f1f1f;
+}
+
+.top-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.lang-buttons button,
+#toggleDark {
+  padding: 8px 14px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  background: #c5d8a4;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.lang-buttons button:hover,
+#toggleDark:hover {
+  background: #b7cc94;
+}
+
+input#searchBar {
+  margin-top: 10px;
+  padding: 10px;
+  width: 80%;
+  max-width: 400px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+main {
+  padding: 20px;
+  text-align: center;
+}
+
+.sourates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+
+.sourate-card {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+
+.dark .sourate-card {
+  background: #1e1e1e;
+  box-shadow: 0 1px 4px rgba(255,255,255,0.1);
+}
+
+.sourate-card:hover {
+  transform: scale(1.02);
+}
+
+.sourate-card h3 {
+  margin: 5px 0;
+}
+
+.sourate-card button {
+  margin-top: 5px;
+  padding: 6px 12px;
+  background: #93b274;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.sourate-card button:hover {
+  background: #7ea862;
+}
+
+
+
+
+

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Habous & Islamic Affairs Portal</title>
+<style>
+  body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; background:#f4f6f2; margin:0; }
+  header { 
+    background: linear-gradient(90deg,#a6c17d,#c5d8a4); 
+    color: #fff; 
+    padding: 15px 20px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    gap: 20px; 
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.4rem; }
+  .logo img { height: 40px; width: auto; }
+  nav{display:flex;gap:18px} 
+  nav a{color:#fff;text-decoration:none;font-weight:600;cursor:pointer}
+  .hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer}
+  .hamburger span{width:26px;height:3px;background:#fff;border-radius:2px}
+  .mobile-menu{display:none;flex-direction:column;background:#c5d8a4;padding:8px;border-radius:8px;position:absolute;top:62px;right:12px;z-index:50}
+  .mobile-menu a{color:#fff;padding:8px 10px;text-decoration:none;border-top:1px solid rgba(255,255,255,0.15)}
+  .container{max-width:1100px;margin:22px auto;padding:0 16px}
+  .card{background:#fff;padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06);margin-bottom:18px}
+  input,select,button{font:inherit}
+  input,select{padding:10px;border:1px solid #d0d7c7;border-radius:8px;margin:6px 0;display:block;width:100%}
+  button{padding:8px 12px;border:0;border-radius:8px;cursor:pointer;font-weight:600}
+  .btn-create{background:#4caf50;color:#fff}
+  .btn-login{background:#a6c17d;color:#fff}
+  .btn-login:hover{background:#8fae66}
+  .btn-edit{background:#2196f3;color:#fff}
+  .btn-archive{background:#ff9800;color:#fff}
+  .btn-delete{background:#d32f2f;color:#fff}
+  .btn-approve{background:#4caf50;color:#fff}
+  .btn-reject{background:#f44336;color:#fff}
+  .btn-logout{background:#f44336;color:#fff}
+  .table{width:100%;border-collapse:collapse;margin-top:12px}
+  .table th{background:#f0f4ea;color:black;padding:12px;text-align:left;}
+  .table td{background:#fff;padding:12px;border-bottom:1px solid #eee;}
+  .table tr:hover td{background:#f9fff5;}
+  .service-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transition: 0.3s;
+    cursor: pointer;
+    margin-bottom: 15px;
+  }
+  .service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    color: #6b8e23;
+  }
+  .service-card h3 { margin: 15px 0 0 0; }
+  .system-row td{background:#eef9ff !important}
+  .hidden{display:none}
+  @media (max-width:780px){ nav{display:none} .hamburger{display:flex} .mobile-menu{right:8px;width:220px} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="./logo.png" alt="Logo">
+    <div>
+      <div>Habous & Islamic Affairs Portal</div>
+    </div>
+  </div>
+  <nav id="mainNav">
+    <a onclick="showHome()">Home</a>
+    <a onclick="showLogin()">Back-office</a>
+  </nav>
+  <div class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="menu">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+<div class="mobile-menu hidden" id="mobileMenu">
+  <a onclick="showHome(); toggleMobileMenu()">Home</a>
+  <a onclick="showLogin(); toggleMobileMenu()">Back-office</a>
+</div>
+
+<div class="container">
+
+  <!-- HOME -->
+  <div id="homePage" class="card">
+    <h2 dir="rtl">مرحباً بكم في بوابة الأوقاف والشؤون الإسلامية</h2>
+    <p dir="rtl" style="opacity:.9">اختر خدمة</p>
+    <div id="servicesSection"></div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="loginPage" class="card hidden">
+    <h2>Back-office Login</h2>
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+    <div style="display:flex;gap:10px;align-items:center;margin-top:8px">
+      <button class="btn-login" onclick="login()">Login</button>
+      <div id="loginMessage" style="color:red;font-weight:600"></div>
+    </div>
+  </div>
+
+  <!-- ADMIN DASHBOARD -->
+  <div id="adminDashboard" class="card hidden">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h1>Dashboard Admin</h1>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+    <h3>Manage Integrators</h3>
+    <input type="text" id="newUserName" placeholder="Username" style="width:100%; margin-bottom:8px;">
+    <input type="email" id="newUserEmail" placeholder="Email" style="width:100%; margin-bottom:8px;">
+    <input type="password" id="newUserPassword" placeholder="Password" style="width:calc(100% - 50px);">
+    <button type="button" onclick="togglePassword('newUserPassword', this)">👁</button>
+    <select id="newUserRole" style="width:100%; margin-bottom:8px;">
+      <option value="creator">Creator</option>
+      <option value="validator">Validator</option>
+    </select>
+    <button class="btn-create" onclick="createUser()" style="width:100%;">Create Integrator</button>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Username</th><th>Email</th><th>Password</th><th>Role</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="userTableBody"></tbody>
+    </table>
+  </div>
+
+  <!-- CREATOR DASHBOARD -->
+<div id="creatorDashboard" class="card hidden">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <h1>Creator Dashboard</h1>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+
+  <h3>Create / Manage Your Contents</h3>
+  <input id="newContent" placeholder="Content Title">
+  <input id="newContentLink" placeholder="Content Link (URL)">
+  <div style="margin-top:8px">
+    <button class="btn-create" onclick="createContent()">Create Content</button>
+  </div>
+
+  <h3>Your Contents</h3>
+  <table class="table">
+    <thead>
+      <tr><th>Title</th><th>Creator</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody id="creatorContentTableBody"></tbody>
+  </table>
+</div>
+
+<!-- VALIDATOR DASHBOARD -->
+<div id="validatorDashboard" class="card hidden">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <h1>Validator Dashboard</h1>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+
+  <h3>Pending Contents for Approval</h3>
+  <table class="table">
+    <thead>
+      <tr><th>Title</th><th>Creator</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody id="validatorContentTableBody"></tbody>
+  </table>
+</div>
+
+
+</div><!-- container -->
+
+<script>
+  /* Utility id */
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+  
+  /* App state */
+  let users=[], contents=[], currentUser=null;
+  
+  /* Load / Save */
+  function loadData(){
+    users = JSON.parse(localStorage.getItem('users')) || [
+      {username:'admin', email:'admin@habous.ma', password:'admin123', role:'admin', active:true},
+      {username:'creator', email:'creator@habous.ma', password:'123', role:'creator', active:true},
+      {username:'validator', email:'validator@habous.ma', password:'123', role:'validator', active:true}
+    ];
+  
+    // Contenus par défaut
+    const defaultContents = [
+      {id:uid(), title:'القرآن بلغات متعددة', creator:'creator', status:'Approved', archived:false, link:'../coran/index.html'},
+      {id:uid(), title:'أوقات الصلاة', creator:'creator', status:'Approved', archived:false, link:'../prayer-time/ind.html'},
+      {id:uid(), title:'التقويم الهجري والميلادي', creator:'creator', status:'Approved', archived:false, link:'../Calendar/calendar.html'},
+      {id:uid(), title:'خريطة المساجد', creator:'creator', status:'Approved', archived:false, link:'../masjid/test.html'},
+      {id:uid(), title:'خطب الجمعة', creator:'creator', status:'Approved', archived:false, link:'../audio/khotba.html'},
+      {id:uid(), title:'الفضاء التفاعلي الديني', creator:'creator', status:'Approved', archived:false, link:'../faq/faq.html'},
+    ];
+  
+    contents = JSON.parse(localStorage.getItem('contents')) || defaultContents;
+    saveData();
+  }
+  
+  function saveData(){
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('contents', JSON.stringify(contents));
+  }
+  
+  /* UI helpers */
+  function toggle(showIds, hideIds){ 
+    showIds.forEach(id => {
+      const el = document.getElementById(id);
+      el.classList.remove('hidden');
+      if(id==='homePage') renderServices();
+    });
+    hideIds.forEach(id => document.getElementById(id).classList.add('hidden')); 
+  }
+  
+  function toggleMobileMenu(){ document.getElementById('mobileMenu').classList.toggle('hidden'); }
+  
+  function showHome(){ toggle(['homePage'], ['loginPage','adminDashboard','creatorDashboard','validatorDashboard']); renderServices(); }
+  function showLogin(){ toggle(['loginPage'], ['homePage','adminDashboard','creatorDashboard','validatorDashboard']); }
+  function showAdmin(){ toggle(['adminDashboard'], ['homePage','loginPage','creatorDashboard','validatorDashboard']); renderUsers(); }
+  function showCreator(){ toggle(['creatorDashboard'], ['homePage','loginPage','adminDashboard','validatorDashboard']); renderCreatorContents(); }
+  function showValidator(){ toggle(['validatorDashboard'], ['homePage','loginPage','adminDashboard','creatorDashboard']); renderValidatorContents(); }
+  
+  /* Escape HTML */
+  function escapeHtml(s){ if(s==null) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+  
+  /* Render home services */
+  function renderServices(){
+    const sec = document.getElementById('servicesSection'); 
+    sec.innerHTML = '';
+    contents.filter(c=>c.status==='Approved' && !c.archived).forEach(c=>{
+      const div = document.createElement('div');
+      div.className = 'service-card';
+      div.innerHTML = `<h3 dir="rtl" style="margin:0">${escapeHtml(c.title)}</h3>`;
+      if(c.link) div.addEventListener('click', ()=>{ window.location.href = c.link; });
+      sec.appendChild(div);
+    });
+  }
+  
+  /* Login / Logout */
+  function login(){
+    const e=document.getElementById('email').value.trim();
+    const p=document.getElementById('password').value.trim();
+    const user = users.find(u=>u.email===e && u.password===p && u.active);
+    const msg = document.getElementById('loginMessage');
+    if(!user){ msg.textContent = 'Incorrect or inactive account'; return; }
+    currentUser = user; msg.textContent = '';
+    if(user.role==='admin') showAdmin();
+    else if(user.role==='creator') showCreator();
+    else if(user.role==='validator') showValidator();
+  }
+  function logout(){ currentUser=null; showHome(); }
+  
+  /* Admin: Users */
+  function renderUsers(){ 
+    const tbody=document.getElementById("userTableBody"); 
+    tbody.innerHTML=""; 
+    users.forEach((u,i)=>{
+      if(u.role==='admin') return; 
+      const tr=document.createElement("tr");
+      const pwdMasked="••••••";
+      tr.innerHTML = `
+        <td>${escapeHtml(u.username)}</td>
+        <td>${escapeHtml(u.email)}</td>
+        <td><span id="pwd-${i}">${pwdMasked}</span> <button onclick="toggleRowPassword(${i}, this)">👁</button></td>
+        <td>${u.role}</td>
+        <td>${u.active?"Active":"Inactive"}</td>
+        <td>
+          <button class="btn-edit" onclick="editUser(${i})">Edit</button>
+          <button class="btn-archive" onclick="toggleUser(${i})">${u.active?"Deactivate":"Activate"}</button>
+          <button class="btn-delete" onclick="deleteUser(${i})">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+  
+  /* Toggle password in form (creation) */
+  function togglePassword(inputId, btn){
+    const input = document.getElementById(inputId);
+    if(!input) return;
+    if(input.type === "password"){
+      input.type = "text";
+      btn.textContent = "🙈";
+    } else {
+      input.type = "password";
+      btn.textContent = "👁";
+    }
+  }
+
+  /* Toggle password in table (users list) */
+  function toggleRowPassword(idx, btn){
+    const span=document.getElementById(`pwd-${idx}`);
+    if(span.textContent==="••••••"){
+      span.textContent=users[idx].password;
+      btn.textContent="🙈";
+    } else {
+      span.textContent="••••••";
+      btn.textContent="👁";
+    }
+  }
+  function deleteUser(idx){
+  const u = users[idx];
+  if(!confirm(`Are you sure you want to delete user "${u.username}"?`)) return;
+  users.splice(idx,1);
+  saveData();
+  renderUsers();
+}
+
+  
+  function editUser(idx){
+    const u = users[idx];
+    const newName = prompt("Edit Username:", u.username);
+    if(newName) u.username = newName;
+  
+    const newEmail = prompt("Edit Email:", u.email);
+    if(newEmail) u.email = newEmail;
+  
+    const newPassword = prompt("Edit Password:", u.password);
+    if(newPassword) u.password = newPassword;
+  
+    const newRole = prompt("Edit Role (creator / validator):", u.role);
+    if(newRole && (newRole==='creator' || newRole==='validator')){
+      u.role = newRole;
+    } else if(newRole){
+      alert("Role invalide ! Choisir 'creator' ou 'validator'.");
+    }
+  
+    saveData();
+    renderUsers();
+  }
+  
+  function toggleUser(idx){
+    users[idx].active = !users[idx].active;
+    saveData(); renderUsers();
+  }
+  
+  function createUser(){
+    const username = document.getElementById('newUserName').value.trim();
+    const email = document.getElementById('newUserEmail').value.trim();
+    const password = document.getElementById('newUserPassword').value.trim();
+    const role = document.getElementById('newUserRole').value;
+    if(!username||!email||!password){ alert("All fields required"); return; }
+    users.push({username,email,password,role,active:true});
+    saveData(); renderUsers();
+    document.getElementById('newUserName').value='';
+    document.getElementById('newUserEmail').value='';
+    document.getElementById('newUserPassword').value='';
+  }
+  
+  /* Creator functions */
+  function createContent() {
+    if(!currentUser) return;
+    const title = document.getElementById('newContent').value.trim();
+    const link = document.getElementById('newContentLink').value.trim();
+    if(!title || !link) { alert('Title and Link required'); return; }
+  
+    contents.push({
+      id: uid(),
+      title: title,
+      creator: currentUser.username,
+      status: 'Pending',
+      archived: false,
+      link: link
+    });
+  
+    saveData();
+    renderCreatorContents();
+    renderServices();
+  
+    document.getElementById('newContent').value = '';
+    document.getElementById('newContentLink').value = '';
+  }
+  
+  function renderCreatorContents() {
+    const tbody = document.getElementById('creatorContentTableBody');
+    tbody.innerHTML = '';
+  
+    contents.forEach(c => {
+      const tr = document.createElement('tr');
+      let actions = '';
+      if(c.creator === currentUser.username){
+        actions = `
+          <button class="btn-edit" onclick="editContent('${c.id}')">Edit</button>
+          <button class="btn-archive" onclick="archiveContent('${c.id}')">${c.archived ? 'Unarchive' : 'Archive'}</button>
+          <button class="btn-delete" onclick="deleteContent('${c.id}')">Delete</button>
+        `;
+      }
+      tr.innerHTML = `
+        <td>${escapeHtml(c.title)}</td>
+        <td>${escapeHtml(c.creator)}</td>
+        <td>${escapeHtml(c.status)}</td>
+        <td>${actions}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  
+  function editContent(id) {
+    const idx = contents.findIndex(c => c.id === id);
+    if(idx === -1) return;
+    const c = contents[idx];
+    if(c.creator !== currentUser.username){ alert("Not allowed!"); return; }
+  
+    const newTitle = prompt('Edit title:', c.title);
+    if(newTitle) c.title = newTitle;
+  
+    const newLink = prompt('Edit URL:', c.link || '');
+    if(newLink) c.link = newLink;
+  
+    c.status = 'Pending';
+    c.archived = false;
+  
+    saveData();
+    renderCreatorContents();
+    renderServices();
+  }
+  
+  function archiveContent(id) {
+    const idx = contents.findIndex(c => c.id === id);
+    if(idx === -1) return;
+    if(contents[idx].creator !== currentUser.username){ alert("Not allowed!"); return; }
+    contents[idx].archived = !contents[idx].archived;
+    saveData();
+    renderCreatorContents();
+    renderServices();
+  }
+  
+  function deleteContent(id) {
+    const idx = contents.findIndex(c => c.id === id);
+    if(idx === -1) return;
+    if(contents[idx].creator !== currentUser.username){ alert("Not allowed!"); return; }
+    if(!confirm(`Delete "${contents[idx].title}" ?`)) return;
+    contents.splice(idx,1);
+    saveData();
+    renderCreatorContents();
+    renderServices();
+  }
+  
+  /* Validator functions */
+  function renderValidatorContents(){
+    const tbody=document.getElementById('validatorContentTableBody'); tbody.innerHTML='';
+    contents.forEach(c=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${escapeHtml(c.title)}</td>
+                    <td>${escapeHtml(c.creator)}</td>
+                    <td>${escapeHtml(c.status)}</td>
+                    <td>
+                      ${c.status==='Pending'? 
+                        `<button class="btn-approve" onclick="approveContent('${c.id}')">Approve</button>
+                         <button class="btn-reject" onclick="rejectContent('${c.id}')">Reject</button>` 
+                        : ''}
+                    </td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  
+  function approveContent(id){ const idx=contents.findIndex(c=>c.id===id); if(idx===-1) return; contents[idx].status='Approved'; saveData(); renderValidatorContents(); renderServices(); }
+  function rejectContent(id){ const idx=contents.findIndex(c=>c.id===id); if(idx===-1) return; contents[idx].status='Rejected'; saveData(); renderValidatorContents(); renderServices(); }
+  
+  /* Init */
+  loadData(); saveData(); renderServices(); showHome();
+  
+  /* Expose functions */
+  window.toggleMobileMenu = toggleMobileMenu;
+  window.showHome = showHome;
+  window.showLogin = showLogin;
+  window.login = login;
+  window.logout = logout;
+  window.createUser = createUser;
+  window.renderUsers = renderUsers;
+  window.createContent = createContent;
+  window.renderCreatorContents = renderCreatorContents;
+  window.renderValidatorContents = renderValidatorContents;
+  window.editContent = editContent;
+  window.archiveContent = archiveContent;
+  window.deleteContent = deleteContent;
+  window.approveContent = approveContent;
+  window.rejectContent = rejectContent;
+  window.togglePassword = togglePassword;
+  window.toggleRowPassword = toggleRowPassword;
+</script>
+
+  
+  
+  
+  
+
+</body>
+</html>

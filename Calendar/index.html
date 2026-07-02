@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>التقويم الهجري / الميلادي + المحوّل</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: linear-gradient(45deg, #E1E6C9, white);
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+      color: #1f3b1f;
+      text-align: center;
+    }
+    h1, h2, h3, h4, h5, h6 { margin: 0; }
+
+    /* Header */
+    /* =========================
+   الترويسة (Header)
+========================= */
+.header {
+  display: flex;
+  justify-content: space-between; /* توزيع العناصر */
+  align-items: center;
+  padding: 12px 25px;
+  background-color: white;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  direction: ltr; /* نخلي الاتجاه يسار لليمين عشان العنوان يسار */
+}
+
+.header h1 {
+  font-size: 30px;
+  font-weight: 700; 
+  color: #8e9b6f;
+  margin: 0;
+}
+
+
+.back-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #c5d8a4;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  box-shadow: 0px 3px 6px rgba(0,0,0,.15);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: #6e7656;
+  transform: translateY(-2px);
+}
+
+
+
+    /* Date */
+    #date {
+      font-size: 30px;
+      font-weight: 500;
+      color: black;
+      margin: 20px 0;
+    }
+
+    /* Calendars */
+    .calendars {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 40px auto;
+      max-width: 1000px;
+      padding: 0 20px;
+    }
+    .calendar {
+      background: #f8fbf5;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.1);
+      padding: 20px;
+      text-align: center;
+    }
+    .calendar h4 {
+      color: #6e7656;
+      margin-bottom: 10px;
+    }
+    .nav-buttons {
+      margin: 10px 0;
+    }
+    .nav-buttons button {
+      background: #8e9b6f;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 0 4px;
+      font-size: 14px;
+      transition: background 0.2s ease;
+    }
+    .nav-buttons button:hover {
+      background: #6e7656;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #bcd5c2;
+      padding: 5px;
+      text-align: center;
+    }
+    th {
+      background: #eaf0e2;
+      color: #2f4f2f;
+    }
+    td {
+      background: #fff;
+      transition: background 0.2s;
+    }
+    td:hover { background: #dfe9d8; }
+    .today {
+      background: #6e7656 !important;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    /* Converter */
+    .converter {
+      background: #f9faf6;
+      border: 1px solid #d3e8d7;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 1100px;
+      margin: 30px auto;
+      text-align: center;
+    }
+    .converter h2 {
+      text-align: center;
+      margin-bottom: 8px;
+      color: #6e7656;
+    }
+    .converter-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 800px) {
+      .converter-row { grid-template-columns: 1fr; }
+    }
+    .form-section {
+      background: #fff;
+      border: 1px solid #bcd5c2;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.05);
+      text-align: center;
+    }
+    .form-section h3 { color: #6e7656; margin: 0 0 12px; }
+    .row { margin: 10px 0; }
+    label {
+      display: inline-block;
+      width: 80px;
+      font-weight: 700;
+      color: #2f5d3a;
+    }
+    input, select {
+      padding: 6px 10px;
+      border: 1px solid #bcd5c2;
+      border-radius: 6px;
+      outline: none;
+      font-family: 'Tajawal', sans-serif;
+    }
+    button {
+      background: #8e9b6f;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 15px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    button:hover { background: #6e7656; transform: translateY(-1px); }
+    .result { margin-top: 10px; font-weight: bold; color: #1f3b1f; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <button class="back-btn" onclick="window.location.href='../dashboard/index.html'">
+     رجوع ⮑
+    </button>
+    <h1>التقويم الهجري والميلادي</h1>
+      </div>
+
+  <!-- شريط اليوم -->
+  <div id="date"></div>
+
+  <!-- التقويمين -->
+  <div class="calendars">
+    <div id="gregorianCalendar" class="calendar"></div>
+    <div id="hijriCalendar" class="calendar"></div>
+  </div>
+
+  <!-- المحوّل -->
+  <div class="converter">
+    <h2>المحوّل بين الهجري والميلادي</h2>
+    <div class="converter-row">
+      <div class="form-section">
+        <h3>من الهجري إلى الميلادي</h3>
+        <div class="row"><label>اليوم:</label><select id="hDay"></select></div>
+        <div class="row"><label>الشهر:</label><select id="hMonth"></select></div>
+        <div class="row"><label>السنة:</label><select id="hYear"></select></div>
+        <button class="primary" onclick="convertHijriToGregorian()">تحويل</button>
+        <div id="conversionResult" class="result"></div>
+      </div>
+  
+      <div class="form-section">
+        <h3>من الميلادي إلى الهجري</h3>
+        <div class="row"><label>اليوم:</label><select id="gDay"></select></div>
+        <div class="row"><label>الشهر:</label><select id="gMonth"></select></div>
+        <div class="row"><label>السنة:</label><select id="gYear"></select></div>
+        <button class="primary" onclick="convertGregorianToHijri()">تحويل</button>
+        <div id="conversionResult2" class="result"></div>
+      </div>
+    </div>
+  </div>
+</body>
+
+
+
+  <script>
+    // أسماء الأشهر
+    const hijriMonths = ["محرم","صفر","ربيع الأول","ربيع الآخر","جمادى الأولى","جمادى الآخرة","رجب","شعبان","رمضان","شوال","ذو القعدة","ذو الحجة"];
+    const gregMonths  = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+
+    // مُهيئ أمّ القرى
+    const umAlQuraFmt = new Intl.DateTimeFormat('en-TN-u-ca-islamic-umalqura',{day:'numeric',month:'numeric',year:'numeric'});
+
+    // الحالة الحالية للتقويمين
+    let gYearNow, gMonthNow, hYearNow, hMonthNow;
+
+    // تعبئة القوائم (اقتراحات)
+    function populateSelects(){
+      // الأيام: هجري 1..30 (افتراضي = 1)
+      for(let i=1;i<=30;i++){
+        const o=document.createElement('option'); o.value=i; o.text=i; if(i===1) o.selected=true;
+        document.getElementById('hDay').appendChild(o);
+      }
+      // الأيام: ميلادي 1..31 (افتراضي = 1)
+      for(let i=1;i<=31;i++){
+        const o=document.createElement('option'); o.value=i; o.text=i; if(i===1) o.selected=true;
+        document.getElementById('gDay').appendChild(o);
+      }
+      // الأشهر: افتراضي محرم / يناير
+      hijriMonths.forEach((n,idx)=>{
+        const o=document.createElement('option'); o.value=idx+1; o.text=n; if(idx===0) o.selected=true;
+        document.getElementById('hMonth').appendChild(o);
+      });
+      gregMonths.forEach((n,idx)=>{
+        const o=document.createElement('option'); o.value=idx+1; o.text=n; if(idx===0) o.selected=true;
+        document.getElementById('gMonth').appendChild(o);
+      });
+      // السنوات الهجرية 1447 → 1356 (افتراضي 1447)
+      for(let y=1447;y>=1356;y--){
+        const o=document.createElement('option'); o.value=y; o.text=y; if(y===1447) o.selected=true;
+        document.getElementById('hYear').appendChild(o);
+      }
+      // السنوات الميلادية 2025 → 1937 (افتراضي 2025)
+      for(let y=2025;y>=1937;y--){
+        const o=document.createElement('option'); o.value=y; o.text=y; if(y===2025) o.selected=true;
+        document.getElementById('gYear').appendChild(o);
+      }
+    }
+
+    // حساب فهرس يوم الأسبوع مع بداية الإثنين
+    function getWeekDayIndex(date){ const d=date.getDay(); return (d===0?6:d-1); }
+
+    // إيجاد التاريخ الميلادي المطابق لتاريخ هجري (ضمن نطاق أمّ القرى 1937–2077)
+    function hijriToGregorianExact(hDay,hMonth,hYear){
+      for(let gy=1937;gy<=2077;gy++){
+        for(let gm=0;gm<12;gm++){
+          const maxD = new Date(Date.UTC(gy,gm+1,0)).getUTCDate();
+          for(let gd=1;gd<=maxD;gd++){
+            const gDate = new Date(Date.UTC(gy,gm,gd));
+            const p = umAlQuraFmt.formatToParts(gDate);
+            const d=+p.find(x=>x.type==='day').value;
+            const m=+p.find(x=>x.type==='month').value;
+            const y=+p.find(x=>x.type==='year').value;
+            if(d===hDay && m===hMonth && y===hYear) return gDate;
+          }
+        }
+      }
+      return null;
+    }
+
+    // بناء جدول شهر
+    function buildCalendar(year,month,isHijri=false){
+      const table=document.createElement('table');
+      const headerRow=document.createElement('tr');
+      ['الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت','الأحد'].forEach(d=>{
+        const th=document.createElement('th'); th.textContent=d; headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      let firstDay,daysInMonth;
+
+      if(!isHijri){
+        firstDay=new Date(year,month,1);
+        daysInMonth=new Date(year,month+1,0).getDate();
+      }else{
+        // أول يوم هجري ← ميلادي
+        firstDay=hijriToGregorianExact(1,month+1,year);
+        if(!firstDay){
+          const tr=document.createElement('tr'); const td=document.createElement('td');
+          td.colSpan=7; td.textContent='خارج نطاق تقويم أمّ القرى (1937–2077)'; tr.appendChild(td); table.appendChild(tr);
+          return table;
+        }
+        // تحديد 29 أو 30 يومًا
+        let dCount=29;
+        if(hijriToGregorianExact(30,month+1,year)) dCount=30;
+        daysInMonth=dCount;
+      }
+
+      let row=document.createElement('tr');
+      let empty=getWeekDayIndex(firstDay);
+      for(let i=0;i<empty;i++){ row.appendChild(document.createElement('td')); }
+
+      for(let d=1; d<=daysInMonth; d++){
+        if(row.children.length===7){ table.appendChild(row); row=document.createElement('tr'); }
+        const cell=document.createElement('td'); cell.textContent=d;
+
+        const today=new Date();
+        if(!isHijri){
+          if(d===today.getDate() && month===today.getMonth() && year===today.getFullYear()) cell.classList.add('today');
+        }else{
+          const parts=umAlQuraFmt.formatToParts(today);
+          const hD=+parts.find(p=>p.type==='day').value;
+          const hM=+parts.find(p=>p.type==='month').value;
+          const hY=+parts.find(p=>p.type==='year').value;
+          if(d===hD && (month+1)===hM && year===hY) cell.classList.add('today');
+        }
+
+        row.appendChild(cell);
+      }
+      table.appendChild(row);
+      return table;
+    }
+
+    // عرض التقويمين + شريط "اليوم"
+    function showCalendars(){
+      const today=new Date();
+
+      // الحالة الافتراضية للميلادي: الشهر والسنة الحاليان
+      gYearNow = gYearNow ?? today.getFullYear();
+      gMonthNow= gMonthNow ?? today.getMonth();
+
+      // الهيدر الميلادي
+      const gBox=document.getElementById('gregorianCalendar');
+      gBox.innerHTML = `
+        <h4>التقويم الميلادي - ${gregMonths[gMonthNow]} ${gYearNow}</h4>
+        <div class="nav-buttons">
+          <button onclick='prevMonth("g")'>▶ السابق</button>
+          <button onclick='resetToday("g")'>اليوم</button>
+          <button onclick='nextMonth("g")'>التالي ◀</button>
+        </div>`;
+      gBox.appendChild(buildCalendar(gYearNow,gMonthNow,false));
+
+      // الحالة الافتراضية للهجري: من تاريخ اليوم (أمّ القرى)
+      const hParts=umAlQuraFmt.formatToParts(today);
+      hYearNow  = hYearNow  ?? +hParts.find(p=>p.type==='year').value;
+      hMonthNow = hMonthNow ?? (+hParts.find(p=>p.type==='month').value - 1);
+
+      // الهيدر الهجري
+      const hBox=document.getElementById('hijriCalendar');
+      hBox.innerHTML = `
+        <h4>التقويم الهجري - ${hijriMonths[hMonthNow]} ${hYearNow}</h4>
+        <div class="nav-buttons">
+          <button onclick='prevMonth("h")'>▶ السابق</button>
+          <button onclick='resetToday("h")'>اليوم</button>
+                  <button onclick='nextMonth("h")'>التالي ◀</button>
+        </div>`;
+      hBox.appendChild(buildCalendar(hYearNow,hMonthNow,true));
+
+      // شريط اليوم (مثال: اليوم: 7 ربيع الأول 1447 هـ — 30 أغسطس 2025 م)
+      const hD=+hParts.find(p=>p.type==='day').value;
+      document.getElementById('date').textContent =
+        `اليوم: ${hD} ${hijriMonths[hMonthNow]} ${hYearNow} هـ — ${today.getDate()} ${gregMonths[today.getMonth()]} ${today.getFullYear()} م`;
+    }
+
+    // تنقّل الشهور
+    function prevMonth(type){
+      if(type==="g"){ gMonthNow--; if(gMonthNow<0){gMonthNow=11;gYearNow--;} }
+      else{ hMonthNow--; if(hMonthNow<0){hMonthNow=11;hYearNow--;} }
+      showCalendars();
+    }
+    function nextMonth(type){
+      if(type==="g"){ gMonthNow++; if(gMonthNow>11){gMonthNow=0;gYearNow++;} }
+      else{ hMonthNow++; if(hMonthNow>11){hMonthNow=0;hYearNow++;} }
+      showCalendars();
+    }
+    function resetToday(type){
+      const today=new Date();
+      if(type==="g"){ gYearNow=today.getFullYear(); gMonthNow=today.getMonth(); }
+      else{
+        const p=umAlQuraFmt.formatToParts(today);
+        hYearNow=+p.find(x=>x.type==='year').value;
+        hMonthNow=+p.find(x=>x.type==='month').value-1;
+      }
+      showCalendars();
+    }
+
+    // أزرار التحويل
+    function convertHijriToGregorian(){
+      const hDay=+document.getElementById('hDay').value;
+      const hMonth=+document.getElementById('hMonth').value;
+      const hYear=+document.getElementById('hYear').value;
+      const res=hijriToGregorianExact(hDay,hMonth,hYear);
+      if(!res){
+        document.getElementById('conversionResult').textContent='⚠️ هذا التاريخ غير موجود في تقويم أمّ القرى (1937–2077)';
+        return;
+      }
+      document.getElementById('conversionResult').textContent =
+        `${hDay} ${hijriMonths[hMonth-1]} ${hYear} هـ = ${res.getUTCDate()} ${gregMonths[res.getUTCMonth()]} ${res.getUTCFullYear()} م`;
+    }
+
+    function convertGregorianToHijri(){
+      const gDay=+document.getElementById('gDay').value;
+      const gMonth=+document.getElementById('gMonth').value-1; // 0-based
+      const gYear=+document.getElementById('gYear').value;
+      const gDate=new Date(Date.UTC(gYear,gMonth,gDay));
+      // تحقق صارم من صحة التاريخ
+      if(gDate.getUTCFullYear()!==gYear || gDate.getUTCMonth()!==gMonth || gDate.getUTCDate()!==gDay){
+        document.getElementById('conversionResult2').textContent='⚠️ التاريخ الميلادي غير صالح';
+        return;
+      }
+      const parts=umAlQuraFmt.formatToParts(gDate);
+      const hD=+parts.find(p=>p.type==='day').value;
+      const hM=+parts.find(p=>p.type==='month').value;
+      const hY=+parts.find(p=>p.type==='year').value;
+      document.getElementById('conversionResult2').textContent =
+        `${gDay} ${gregMonths[gMonth]} ${gYear} م = ${hD} ${hijriMonths[hM-1]} ${hY} هـ`;
+    }
+
+    function fillGregorianFromHijri(){
+      const hDay=+document.getElementById('hDay').value;
+      const hMonth=+document.getElementById('hMonth').value;
+      const hYear=+document.getElementById('hYear').value;
+      const res=hijriToGregorianExact(hDay,hMonth,hYear);
+      if(!res){ alert('⚠️ هذا التاريخ الهجري غير موجود ضمن أمّ القرى'); return; }
+      document.getElementById('gDay').value = res.getUTCDate();
+      document.getElementById('gMonth').value = res.getUTCMonth()+1;
+      document.getElementById('gYear').value = res.getUTCFullYear();
+    }
+
+    function fillHijriFromGregorian(){
+      const gDay=+document.getElementById('gDay').value;
+      const gMonth=+document.getElementById('gMonth').value-1;
+      const gYear=+document.getElementById('gYear').value;
+      const gDate=new Date(Date.UTC(gYear,gMonth,gDay));
+      if(gDate.getUTCFullYear()!==gYear || gDate.getUTCMonth()!==gMonth || gDate.getUTCDate()!==gDay){
+        alert('⚠️ التاريخ الميلادي غير صالح'); return;
+      }
+      const parts=umAlQuraFmt.formatToParts(gDate);
+      document.getElementById('hDay').value  = +parts.find(p=>p.type==='day').value;
+      document.getElementById('hMonth').value= +parts.find(p=>p.type==='month').value;
+      document.getElementById('hYear').value = +parts.find(p=>p.type==='year').value;
+    }
+
+    // تشغيل أولي
+    populateSelects();
+    showCalendars();
+  </script>
+</body>
+</html>

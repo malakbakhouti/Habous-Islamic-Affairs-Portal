@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>القرآن الكريم</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <h1 class="main-title">Quran Multilingual</h1>
+    
+    <div class="top-controls">
+      <div class="lang-buttons">
+        <a href="../dashboard/index.html">⮐ Back</a>
+        <button onclick="changeLang('ar')">Arabic</button>
+        <button onclick="changeLang('fr')">French</button>
+        <button onclick="changeLang('en')">English</button>
+      </div>
+    </div>
+    
+    <input type="text" id="searchBar" placeholder="Search Surah ...">
+  </header>
+  
+  <style>
+    /* ===== HEADER STYLÉ ===== */
+    header {
+      position: relative; /* important pour centrage et overlays */
+      background: linear-gradient(135deg, #e7eddb, #a6c17d);
+      padding: 25px 20px; /* plus d’espace vertical pour aérer */
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12); /* léger relief */
+      transition: background 0.3s ease;
+    }
+    
+    /* Titre principal */
+    header h1.main-title {
+      margin: 0;
+      color: #ffffff;
+      font-family: 'Amiri', serif;
+      font-weight: 700; /* plus visible que 100 */
+      font-size: 42px; /* légèrement plus grand */
+      letter-spacing: 1px;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.3); /* relief subtil */
+      transition: transform 0.3s ease, text-shadow 0.3s ease;
+    }
+    
+    /* Effet hover sur le titre */
+    header h1.main-title:hover {
+      transform: scale(1.03);
+      text-shadow: 2px 4px 10px rgba(0,0,0,0.35);
+    }
+    
+    /* ===== BOUTONS DE LANGUE STYLÉS ===== */
+    .lang-buttons a,
+    .lang-buttons button {
+      display: inline-block;
+      padding: 8px 16px; /* légèrement plus grand pour confort */
+      margin: 5px;
+      background-color: #e7eddb; /* gris clair harmonieux avec le thème */
+      border: 1px solid #cfdac2; /* bordure douce */
+      border-radius: 12px; /* arrondi plus prononcé */
+      text-decoration: none;
+      color: #3a4c1f; /* vert profond pour texte */
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08); /* léger relief */
+    }
+    
+    /* Effet hover */
+    .lang-buttons a:hover,
+    .lang-buttons button:hover {
+      background-color: #dfe8c9; /* un peu plus vert au survol */
+      color: #2f4f2f;
+      transform: translateY(-2px); /* effet léger de levée */
+      box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+    }
+    
+    /* Effet focus (accessibilité clavier) */
+    .lang-buttons a:focus,
+    .lang-buttons button:focus {
+      outline: none;
+      border-color: #7c9e46;
+      box-shadow: 0 0 0 3px rgba(124,158,70,0.3);
+    }
+    
+    /* ===== SEARCH BAR STYLÉE ===== */
+    #searchBar {
+      margin-top: 15px;
+      width: 60%;
+      max-width: 400px; /* largeur maximale */
+      padding: 10px 14px; /* plus confortable pour la saisie */
+      border-radius: 12px; /* arrondi moderne */
+      border: 1px solid #cfdac2; /* bordure douce */
+      background-color: #f5f7f0; /* gris clair harmonieux */
+      font-size: 15px;
+      color: #3a4c1f;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.08); /* léger relief */
+      transition: all 0.3s ease;
+    }
+    
+    /* Effet focus */
+    #searchBar:focus {
+      outline: none;
+      border-color: #7c9e46; /* vert du thème */
+      box-shadow: 0 0 6px rgba(124,158,70,0.4); /* glow léger */
+      background-color: #ffffff; /* légèrement plus clair au focus */
+    }
+    </style>
+    
+
+   
+  <main>
+    <h2 id="section-title">Read and Listen to Surahs of the Quran</h2>
+    <div id="sourate-list" class="sourates-grid"></div>
+    
+    <!-- Verse view, hidden by default -->
+    <div id="verse-view" style="display: none;">
+      <button id="back-btn" onclick="goBack()">⮐ Back</button>
+      <h2 id="sura-title"></h2>
+      <div id="verse-list"></div>
+    </div>
+  </main>
+
+  <script src="versets.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
+
